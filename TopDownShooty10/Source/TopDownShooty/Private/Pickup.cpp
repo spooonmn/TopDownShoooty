@@ -50,12 +50,17 @@ void APickup::InitializePickup(const TSubclassOf<UItemBase> BaseClass, const int
 
 		PickupMesh->SetStaticMesh(ItemData->AssetData.Mesh);
 
+		UpdateInteractableData();
 	}
 }
 
-void APickup::InitializeDrop(UItemBase* ItemDrop, const int32 InQuantity)
+void APickup::InitializeDrop(UItemBase* ItemToDrop, const int32 InQuantity)
 {
-
+	ItemReference = ItemToDrop;
+	InQuantity <= 0 ? ItemReference->SetQuantity(1) : ItemReference->SetQuantity(InQuantity);
+	ItemReference->NumericData.Weight = ItemToDrop->GetItemSingleWeight();
+	PickupMesh->SetStaticMesh(ItemToDrop->AssetData.Mesh);
+	UpdateInteractableData();
 }
 
 void APickup::UpdateInteractableData()
@@ -64,21 +69,48 @@ void APickup::UpdateInteractableData()
 	InstanceInteractableData.Action = ItemReference->TextData.InteractionText;
 	InstanceInteractableData.Name = ItemReference->TextData.ItemName;
 	InstanceInteractableData.Quantity = ItemReference->Quantity;
+	InteractableData = InstanceInteractableData;
+	
+
+}
+void APickup::Tick(float DeltaTime)
+{
 }
 void APickup::BeginFocus()
 {
-
+	if (PickupMesh)
+	{
+		PickupMesh->SetRenderCustomDepth(true);
+	}
 }
 
 void APickup::EndFocus()
 {
+	if (PickupMesh)
+	{
+		PickupMesh->SetRenderCustomDepth(false);
+	}
 }
 void APickup::Interact(AMyTopDownCharacter* PlayerCharacter)
 {
-
+	if (PlayerCharacter)
+	{
+		TakePickup(PlayerCharacter);
+	}
 }
 void APickup::TakePickup(const AMyTopDownCharacter* Taker)
 {
+	if (!IsPendingKillPending())
+	{
+		if (ItemReference) {
+			//if(UInventoryComponent*PlayerInventory = Taker->GetInventory())
+
+			// try to add item to player inventory
+			// based on result of the add operation
+			// we adjust or destroy the pickup
+
+		}
+	}
 
 }
 
