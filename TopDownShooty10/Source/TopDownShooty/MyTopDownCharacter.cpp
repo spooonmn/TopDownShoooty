@@ -13,6 +13,10 @@
 #include "DrawDebugHelpers.h"
 #include "UserInterface/TopDownHUD.h"
 
+#include "Engine/World.h"
+#include "GameFramework/PlayerController.h"
+
+
 // Sets default values
 AMyTopDownCharacter::AMyTopDownCharacter()
 {
@@ -73,7 +77,7 @@ AMyTopDownCharacter::AMyTopDownCharacter()
 	// Interaction params
 
 	InteractionCheckFrequency = 0.1f;   
-	InteractionCheckDistance = 300.0f;
+	InteractionCheckDistance = 400.0f;
 
 }
 
@@ -109,10 +113,6 @@ void AMyTopDownCharacter::Tick(float DeltaTime)
 	{
 			PerformInteractionCheck();
 	}
-
-
-
-
 
 
 }
@@ -249,26 +249,41 @@ void AMyTopDownCharacter::PerformInteractionCheck() // line check to see if ther
 	
 	FVector TraceEnd{TraceStart + (GetActorRotation().Vector() * InteractionCheckDistance)}; // the end of the line trace is the start plus the view rotation vector times the interaction check distance
 	TraceEnd.Z -= 200.0f;
-	// print GertActorRotation().Vector() to screen
-	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("GetActorRotation().Vector(): %s"), *GetActorRotation().Vector().ToString()));
+	// ray cast from camera to mouseposition	
+
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+	FVector MouseLocation;
+	FVector MouseDirection;
+	PlayerController->DeprojectMousePositionToWorld(MouseLocation, MouseDirection);
+	float RayLength = 1000000.f; // Set a large value for ray length
+	FVector RayEnd = MouseLocation + RayLength * MouseDirection;
+
+	FHitResult HitResult;
+	FCollisionQueryParams TraceParams;
+	TraceParams.AddIgnoredActor(this); // Ignore this actor
 	
-	DrawDebugLine(GetWorld(), TraceStart, TraceEnd, FColor::Red, false, 1.0f, 0, 2.0f); // draw the line trace
+	//DrawDebugLine(GetWorld(), MouseLocation, RayEnd, FColor::Red, false, 1.0f, 0, 2.0f); // draw the line trace
+
+
+
+	
+	//DrawDebugLine(GetWorld(), TraceStart, TraceEnd, FColor::Red, false, 1.0f, 0, 2.0f); // draw the line trace
 	
 	FCollisionQueryParams QueryParams; // create a collision query params for LineTraceSingleByChannel
 	QueryParams.AddIgnoredActor(this); // ignore the player character
 	FHitResult TraceHit; // create a hit result for the line trace  including the actor
 
-	if (GetWorld()->LineTraceSingleByChannel(TraceHit, TraceStart, TraceEnd, ECC_Visibility, QueryParams)) // the line trace
+	if (GetWorld()->LineTraceSingleByChannel(HitResult, MouseLocation, RayEnd, ECollisionChannel::ECC_Visibility, TraceParams)) // the line trace
 	{
-		if (TraceHit.GetActor()->GetClass()->ImplementsInterface(UInteractionInterface::StaticClass())) // if the actor can be interacted with
+		if (HitResult.GetActor()->GetClass()->ImplementsInterface(UInteractionInterface::StaticClass())) // if the actor can be interacted with
 		{
-			const float Distance = (TraceStart - TraceHit.ImpactPoint).Size(); // the distance between the start of the line trace and the impact point
+			const float Distance = (TraceStart - HitResult.ImpactPoint).Size(); // the distance between the start of the line trace and the impact point
 
-			if (TraceHit.GetActor() != InteractionData.CurrentInteractable && Distance <= InteractionCheckDistance)
+			if (HitResult.GetActor() != InteractionData.CurrentInteractable && Distance <= InteractionCheckDistance)
 			{
-				FoundInteractable(TraceHit.GetActor()); // if the actor is not the current interactable and the distance is less than the interaction check distance then the actor is the new interactable
+				FoundInteractable(HitResult.GetActor()); // if the actor is not the current interactable and the distance is less than the interaction check distance then the actor is the new interactable
 			}
-			if (TraceHit.GetActor() == InteractionData.CurrentInteractable)
+			if (HitResult.GetActor() == InteractionData.CurrentInteractable)
 			{
 				return; // still looking at same interactable no logic needed, maintain current status
 			}

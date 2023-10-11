@@ -98,6 +98,7 @@ void APickup::Interact(AMyTopDownCharacter* PlayerCharacter)
 		TakePickup(PlayerCharacter);
 	}
 }
+
 void APickup::TakePickup(const AMyTopDownCharacter* Taker)
 {
 	if (!IsPendingKillPending())
@@ -112,6 +113,24 @@ void APickup::TakePickup(const AMyTopDownCharacter* Taker)
 		}
 	}
 
+}
+
+void APickup::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
+{
+	Super::PostEditChangeProperty(PropertyChangedEvent);
+
+	const FName ChangedPropertyName = PropertyChangedEvent.Property ? PropertyChangedEvent.Property->GetFName() : NAME_None;
+
+	if (ChangedPropertyName == GET_MEMBER_NAME_CHECKED(APickup, DesiredItemID))
+	{
+		if (ItemDataTable) 
+		{
+			if (const FItemStruct* ItemData = ItemDataTable->FindRow<FItemStruct>(DesiredItemID, DesiredItemID.ToString()))
+			{
+				PickupMesh->SetStaticMesh(ItemData->AssetData.Mesh);
+			}
+		}
+	}
 }
 
 

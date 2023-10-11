@@ -42,16 +42,16 @@ protected:
 	UPROPERTY(VisibleAnywhere,Category = "Pickup | Components")
 		UStaticMeshComponent* PickupMesh;
 
-	UPROPERTY(EditInstanceOnly, Category = "Pickup | Item DataBase")
+	UPROPERTY(EditInstanceOnly, Category = "Pickup | Item DataBase -Edit-")
 		UDataTable* ItemDataTable;
 
-	UPROPERTY(EditInstanceOnly, Category = "Pickup | Item DataBase")
+	UPROPERTY(EditInstanceOnly, Category = "Pickup | Item DataBase -Edit-")
 		FName DesiredItemID;
 
 	UPROPERTY(VisibleAnywhere, Category = "Pickup | Item Reference")
 		UItemBase* ItemReference;
 
-	UPROPERTY(EditInstanceOnly, Category = "Pickup |  Item Reference")
+	UPROPERTY(EditInstanceOnly, Category = "Pickup | Item DataBase -Edit-")
 		int32 ItemQuantity;
 
 	UPROPERTY(VisibleInstanceOnly, Category = "Pickup | Interaction")
@@ -59,8 +59,15 @@ protected:
 	
 
 	virtual void Interact(AMyTopDownCharacter* PlayerCharacter) override;
+	void UpdateInteractableData();
+
 	void TakePickup(const AMyTopDownCharacter* Taker);
 
-	void UpdateInteractableData();
+#if WITH_EDITOR
+	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+#endif
+	// this is just for when you are in the editor to change the mesh of the data table for level editing 
+
+	
 
 };
