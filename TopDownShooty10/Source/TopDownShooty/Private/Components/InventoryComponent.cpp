@@ -2,6 +2,7 @@
 
 
 #include "Components/InventoryComponent.h"
+#include "Items/ItemBase.h"
 
 // Sets default values for this component's properties
 UInventoryComponent::UInventoryComponent()
@@ -57,7 +58,7 @@ FItemAddResult UInventoryComponent::HandleAddItem(UItemBase* InputItem)
 	return FItemAddResult();
 }
 
-UItemBase* UInventoryComponent::FindMatchingItem(UItemBase* Itemin) const
+UItemBase* UInventoryComponent::FindMatchingItem(UItemBase* ItemIn) const
 {
 	if (ItemIn)
 	{
@@ -73,7 +74,7 @@ UItemBase* UInventoryComponent::FindNextItemByID(UItemBase* ItemIn) const
 {
 	if (ItemIn)
 	{
-		if (const TArray <TObjectPtr<UItemBase>>::ElementType* Result = InventoryContents.FindByKey(ItemIn)) // getting pointer to ellemt type then dereference pointer idk ;/
+		if (const TArray<TObjectPtr<UItemBase>>::ElementType* Result = InventoryContents.FindByKey(ItemIn)) 
 		{
 			return *Result;
 		}
@@ -83,11 +84,13 @@ UItemBase* UInventoryComponent::FindNextItemByID(UItemBase* ItemIn) const
 
 UItemBase* UInventoryComponent::FindNextPartialStack(UItemBase* ItemIn) const
 {
-	if (const TArray <TObjectPtr<UItemBase>>::ElementType* Result
-		= InventoryContents.FindLastByPredicate([&ItemIn](const UItemBase* InventoryItem)
-			{
-				return InventoryItem->ID == ItemIn->ID && InventoryItem->IsFullItemStack();
-			}
+	 // getting a pointer to the element type          // find by predicate takes a lambda function/ condition which is does the item id match the item id of the item we are looking for and is the item stack not full
+	if (const TArray<TObjectPtr<UItemBase>>::ElementType* Result = InventoryContents.FindByPredicate([&ItemIn](const UItemBase* InventoryItem)
+		{
+			// if the item id matches and the item stack is not full
+			return InventoryItem->ID == ItemIn->ID && InventoryItem->IsFullItemStack();
+		}
+	
 		))
 	{
 		return *Result;

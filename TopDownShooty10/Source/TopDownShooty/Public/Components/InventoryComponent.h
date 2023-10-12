@@ -123,7 +123,7 @@ protected:
 
 	//properties and variables
 	UPROPERTY(EditInstanceOnly,Category = "Inventory")
-		float EditInstanceOnly; // the total weight of the inventory
+		float InventoryTotalWeight; // the total weight of the inventory
 	UPROPERTY(VisibleAnywhere, Category = "Inventory")
 		int32 InventorySlotsCapacity; // the max number of slots in the inventory
 	UPROPERTY(EditInstanceOnly, Category = "Inventory")
