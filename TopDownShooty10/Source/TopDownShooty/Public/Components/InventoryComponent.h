@@ -87,36 +87,36 @@ public:
 	UInventoryComponent();
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	UPROPERTY(Category = "Inventory")
+	UFUNCTION(Category = "Inventory")
 		FItemAddResult HandleAddItem(UItemBase* InputItem); // add an item to the inventory
-	UPROPERTY(Category = "Inventory")
+	UFUNCTION(Category = "Inventory")
 		UItemBase* FindMatchingItem(UItemBase* Itemin) const; // find an item in the inventory that matches the item passed in
-	UPROPERTY(Category = "Inventory")
+	UFUNCTION(Category = "Inventory")
 		UItemBase* FindNextItemByID(UItemBase* ItemIn) const; // find the next item in the inventory that matches the item passed in
-	UPROPERTY(Category = "Inventory")
+	UFUNCTION(Category = "Inventory")
 		UItemBase* FindNextPartialStack(UItemBase* ItemIn) const; // find the next partial stack in the inventory that matches the item passed in
 	
-	UPROPERTY(Category = "Inventory")
+	UFUNCTION(Category = "Inventory")
 		void RemoveSingleInstanceOfItem(UItemBase* ItemIn); // removes all of stack
-	UPROPERTY(Category = "Inventory")
+	UFUNCTION(Category = "Inventory")
 		int32 RemoveAmountOfItem(UItemBase* ItemIn, int32 DesiredAmountToRemove); // remove a certain amount of an item from the inventory
-	UPROPERTY(Category = "Inventory")
+	UFUNCTION(Category = "Inventory")
 		void SplitExistingStack(UItemBase* ItemIn, const int32 AmountToSplit); // split a stack of items
 
 	// getters
-	UPROPERTY(Category = "Inventory")
+	UFUNCTION(Category = "Inventory")
 		FORCEINLINE float GetInventoryTotalWeight() const { return InventoryTotalWeight; }; // get the total weight of the inventory
-	UPROPERTY(Category = "Inventory")
+	UFUNCTION(Category = "Inventory")
 		FORCEINLINE float GetWeightCapacity() const { return InventoryWeightCapacity; }; // get the total capacity
-	UPROPERTY(Category = "Inventory")
+	UFUNCTION(Category = "Inventory")
 		FORCEINLINE int32 GetSlotCapacity() const { return InventorySlotsCapacity; }; // the macx number of slots in the inventory
-	UPROPERTY(Category = "Inventory")
+	UFUNCTION(Category = "Inventory")
 		FORCEINLINE TArray<UItemBase*> GetInventoryContents() const { return InventoryContents; }; // gets referance to inventory contents
 	
 	// setters
-	UPROPERTY(Category = "Inventory")
+	UFUNCTION(Category = "Inventory")
 		FORCEINLINE void SetSlotsCapacity(const int32 NewSlotsCapacity) { InventorySlotsCapacity = NewSlotsCapacity; }; // set the max number of slots in the inventory eg backback upgrade
-	UPROPERTY(Category = "Inventory")
+	UFUNCTION(Category = "Inventory")
 		FORCEINLINE void SetWeightCapacity(const float NewWeightCapacity) { InventoryWeightCapacity = NewWeightCapacity; }; // set the max weight of the inventory eg backpack upgrade
 
 protected:
@@ -131,10 +131,6 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, Category = "Inventory")
 		TArray<TObjectPtr<UItemBase>> InventoryContents; // the contents of the inventory
-
-
-
-
 
 
 	// functions
